@@ -70,10 +70,13 @@ def check_file(file_full_path):
             error('%s missing metadata for %s' % (file_full_path, key))
 
     if metadata.get('image', False):
-        response = urllib2.urlopen(metadata['image'])
-        response_content_type = response.info().getheader('Content-Type')
-        if response_content_type in allowed_image_content_types:
-            error('%s has bad content type: %s' % (file_full_path, response_content_type))
+        try:
+            response = urllib2.urlopen(metadata['image'])
+            response_content_type = response.info().getheader('Content-Type')
+            if response_content_type in allowed_image_content_types:
+                error('%s has bad content type: %s' % (file_full_path, response_content_type))
+        except:
+            error('%s cannot fetch image' % file_full_path)
 
     if linter_command.get(file_extension, False):
         command = list(linter_command[file_extension])
